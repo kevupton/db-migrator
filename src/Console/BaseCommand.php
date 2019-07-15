@@ -29,17 +29,19 @@ abstract class BaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $database_path = getcwd() . "/" . $input->getOption('database_path');
-        $this->manager = create_db_manager($database_path);
-
-        $output->writeln('Running in context: ' . $database_path);
-
         $dotenv = Dotenv::create(getcwd() . "/" . $input->getOption('env_path'));
 
         try {
             $dotenv->load();
         } catch (Exception $e) {
+            $output->writeln('Could not find .env file.');
         }
+        $output->writeln('Environment Loaded.');
+
+        $database_path = getcwd() . "/" . $input->getOption('database_path');
+        $this->manager = create_db_manager($database_path);
+
+        $output->writeln('Running in context: ' . $database_path);
 
         $this->handle($input, $output);
     }
