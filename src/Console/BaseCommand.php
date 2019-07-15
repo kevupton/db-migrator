@@ -23,7 +23,8 @@ abstract class BaseCommand extends Command
 
     protected function configure()
     {
-        $this->addOption('database_path', ['db'], InputOption::VALUE_OPTIONAL, 'The path to the Database directory', './')
+        $this->addOption('database_path', ['db'], InputOption::VALUE_OPTIONAL, 'The path to the Database directory', 'db')
+            ->addOption('basic', null, InputOption::VALUE_OPTIONAL, 'Whether to use for a basic site. Prioritizes wordpress.', false)
             ->addOption('env_path', ['env'], InputOption::VALUE_OPTIONAL, 'The path to the .env file directory', './');
     }
 
@@ -39,7 +40,14 @@ abstract class BaseCommand extends Command
         $output->writeln('Environment Loaded.');
 
         $database_path = getcwd() . "/" . $input->getOption('database_path');
-        $this->manager = create_db_manager($database_path);
+
+        /** If it is a basic migration then dont do wordpress. */
+        if ($input->getOption('basic') !== false) {
+            $this->manager = create_db_manager($database_path);
+        }
+        else {
+            $this->manager = create_wp_db_manager($database_path);
+        }
 
         $output->writeln('Running in context: ' . $database_path);
 
