@@ -1,0 +1,26 @@
+{
+    "name": "kevupton/db-migrator",
+    "description": "",
+    "type": "library",
+    "require": {
+        "dg/mysql-dump": "^1.5",
+        "ext-mysqli": "*",
+        "ext-zlib": "*",
+        "illuminate/support": "^5.8",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kevupton\\DBMigrator\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Kevin Upton",
+            "email": "uptonkg@gmail.com"
+        }
+    ]
+}
