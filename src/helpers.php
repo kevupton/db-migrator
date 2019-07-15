@@ -3,9 +3,9 @@
 use Kevupton\DBMigrator\DBManager;
 
 if (!function_exists('create_db_manager')) {
-    function create_db_manager($ignore = [], $parsers = [], $variables = [])
+    function create_db_manager($dir = __DIR__ . '/db', $ignore = [], $parsers = [], $variables = [])
     {
-        return new DBManager(__DIR__ . '/../db',
+        return new DBManager($dir,
             env('DB_HOST'),
             env('DB_NAME'),
             env('DB_USERNAME'),
@@ -16,7 +16,7 @@ if (!function_exists('create_db_manager')) {
 }
 
 if (!function_exists('create_wp_db_manager')) {
-    function create_wp_db_manager($ignore = [], $parsers = [], $variables = [])
+    function create_wp_db_manager($dir = __DIR__ . '/db', $ignore = [], $parsers = [], $variables = [])
     {
         $parsers = array_merge([
             'SITE_URL' => [
@@ -36,7 +36,7 @@ if (!function_exists('create_wp_db_manager')) {
             'WP_HOST' => env('WP_HOST'),
         ], $variables);
 
-        return new DBManager(__DIR__ . '/../db',
+        return new DBManager($dir,
             env('DB_HOST'),
             env('DB_NAME'),
             env('DB_USERNAME'),
