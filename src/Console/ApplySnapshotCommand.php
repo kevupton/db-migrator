@@ -12,6 +12,7 @@ class ApplySnapshotCommand extends BaseCommand
 
     protected function configure()
     {
+        parent::configure();
         $this->setDescription('Applies a snapshot to the current database')
             ->addArgument('snapshot_name', InputArgument::REQUIRED, 'The full name of the snapshot (2019-01-01_11:11:11.sql.gz)');
     }

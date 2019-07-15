@@ -11,6 +11,7 @@ class TakeSnapshotCommand extends BaseCommand
 
     protected function configure()
     {
+        parent::configure();
         $this->setDescription('Takes a snapshot of the current database');
     }
 
