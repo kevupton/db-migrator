@@ -3,6 +3,10 @@
 namespace Kevupton\DBMigrator;
 
 use Exception;
+use Kevupton\DBMigrator\Core\DBParser;
+use Kevupton\DBMigrator\Core\MigrationManager;
+use Kevupton\DBMigrator\Core\MigrationSettings;
+use Kevupton\DBMigrator\Core\SnapshotManager;
 
 class DBManager
 {

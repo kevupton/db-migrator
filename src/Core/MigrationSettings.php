@@ -1,6 +1,6 @@
 <?php
 
-namespace Kevupton\DBMigrator;
+namespace Kevupton\DBMigrator\Core;
 
 use Exception;
 use mysqli;

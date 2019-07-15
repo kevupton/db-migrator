@@ -1,8 +1,9 @@
 <?php
 
-namespace Kevupton\DBMigrator;
+namespace Kevupton\DBMigrator\Core;
 
 use Exception;
+use Kevupton\DBMigrator\DBManager;
 use mysqli;
 
 class MigrationManager

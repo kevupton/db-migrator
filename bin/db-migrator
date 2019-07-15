@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+$dir = __DIR__ . '/..';
+
+if (!file_exists($dir . '/autoload.php')) {
+    $dir = __DIR__ . '/../vendor';
+}
+
+if (!file_exists($dir . '/autoload.php')) {
+    $dir = __DIR__ . '/../../..';
+}
+
+if (!file_exists($dir . '/autoload.php')) {
+    echo 'Autoload not found.';
+    exit(1);
+}
+
+require_once $dir . '/autoload.php';
+
+use Kevupton\DBMigrator\Console\ApplySnapshotCommand;
+use Kevupton\DBMigrator\Console\TakeSnapshotCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+
+$application->setName('db-migrator');
+
+$application->add(new TakeSnapshotCommand());
+$application->add(new ApplySnapshotCommand());
+
+$application->run();
