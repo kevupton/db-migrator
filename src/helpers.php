@@ -20,8 +20,11 @@ if (!function_exists('create_wp_db_manager')) {
     function create_wp_db_manager($dir = __DIR__ . '/db', $ignore = [], $parsers = [], $variables = [])
     {
         $parsers = array_merge([
+            'ENCODED_SITE_URL' => [
+                DBParser::regex('/https?(?:[%3A2F\\\\]+)(?:www\\.)?' . preg_quote(env('WP_HOST'), '/') . '/ui'),
+            ],
             'SITE_URL' => [
-                DBParser::regex('/https?(?:[\\:\\/\\\\]+|[%3A2F\\\\]+)(?:www\\.)?' . preg_quote(env('WP_HOST'), '/') . '/ui'),
+                DBParser::regex('/https?(?:[\\:\\/\\\\]+)(?:www\\.)?' . preg_quote(env('WP_HOST'), '/') . '/ui'),
             ],
             'WP_HOST' => [
                 DBParser::regex('/(?:[^@]|^)([\\/\\:a-zA-Z_\\-0-9.%]*)' . preg_quote(env('WP_HOST'), '/') . '/ui', '$1?'),
@@ -32,6 +35,7 @@ if (!function_exists('create_wp_db_manager')) {
         ], $parsers);
 
         $variables = array_merge([
+            'ENCODED_SITE_URL' => env('WP_PROTOCOL') . urlencode('://') . env('WP_HOST'),
             'SITE_URL' => env('WP_PROTOCOL') . '://' . env('WP_HOST'),
             'WP_FILE_PATH' => env('WP_FILE_PATH'),
             'WP_HOST' => env('WP_HOST'),
