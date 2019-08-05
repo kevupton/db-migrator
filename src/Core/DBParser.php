@@ -3,6 +3,7 @@
 namespace Kevupton\DBMigrator\Core;
 
 use Exception;
+use ParseError;
 use stdClass;
 
 class DBParser
@@ -138,10 +139,20 @@ class DBParser
                 throw new Exception('$data is not a string, cannot unserialize it...');
             }
 
-            $temp = '';
-            eval('$temp = "' . $data . '";');
+            $temp = '$temp = "' . $data . '";';
+
+            /* Execute the storing of the temp data */
+            try {
+                eval($temp);
+            }
+            catch (ParseError $e) {
+                throw new \Exception($e->getMessage());
+            }
+
             $data = $this->replace($from, $to, $this->unserialize(stripslashes($temp)), true);
-        } catch (Exception $e) {
+        }
+
+        catch (Exception $e) {
             if (is_array($data) || $data instanceof stdClass) {
                 foreach ($data as &$value) {
                     $value = $this->replace($from, $to, $value, false);
