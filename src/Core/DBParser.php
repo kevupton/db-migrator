@@ -138,12 +138,9 @@ class DBParser
                 throw new Exception('$data is not a string, cannot unserialize it...');
             }
 
-            try {
-                $data = $this->replace($from, $to, $this->unserialize($data), true);
-            }
-            catch (Exception $e) {
-                $data = $this->replace($from, $to, $this->unserialize(stripslashes($data)), true);
-            }
+            $temp = '';
+            eval('$temp = "' . $data . '";');
+            $data = $this->replace($from, $to, $this->unserialize(stripslashes($temp)), true);
         } catch (Exception $e) {
             if (is_array($data) || $data instanceof stdClass) {
                 foreach ($data as &$value) {
@@ -155,7 +152,7 @@ class DBParser
         }
 
         if ($serialised) {
-            return addslashes(serialize($data));
+            return str_replace(["\n", "\r"], ['\n', '\r'], addslashes(serialize($data)));
         }
 
         return $data;
