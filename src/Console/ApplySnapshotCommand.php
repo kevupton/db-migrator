@@ -20,7 +20,13 @@ class ApplySnapshotCommand extends BaseCommand
     protected function handle(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Applying Snapshot...');
-        $this->manager->snapshots()->applySnapshot($input->getArgument('snapshot_name'));
-        $output->writeln('Complete.');
+        try {
+            $this->manager->snapshots()->applySnapshot($input->getArgument('snapshot_name'));
+            $output->writeln('Complete.');
+        } catch (\Exception $e) {
+            $output->writeln('[ERROR]');
+            $output->writeln($e->getMessage());
+            $output->writeln($e->getTraceAsString());
+        }
     }
 }

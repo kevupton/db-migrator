@@ -18,8 +18,14 @@ class TakeSnapshotCommand extends BaseCommand
     protected function handle(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Taking Snapshot... Please wait.');
-        $name = $this->manager->snapshots()->takeSnapshot();
-        $output->writeln('Snapshot Complete!');
-        $output->writeln('Output: ' . $name);
+        try {
+            $name = $this->manager->snapshots()->takeSnapshot();
+            $output->writeln('Snapshot Complete!');
+            $output->writeln('Output: ' . $name);
+        } catch (\Exception $e) {
+            $output->writeln('[ERROR]');
+            $output->writeln($e->getMessage());
+            $output->writeln($e->getTraceAsString());
+        }
     }
 }
