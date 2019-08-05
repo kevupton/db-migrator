@@ -229,5 +229,6 @@ class SnapshotManager
     private function increaseExecutionTime()
     {
         ini_set('max_execution_time', env('DB_MANAGER_MAX_EXECUTION_TIME', 3600 * 2)); // TWO HOURS
+        set_time_limit(0);
     }
 }
