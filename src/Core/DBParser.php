@@ -20,6 +20,7 @@ class DBParser
 
     public function __construct($manager, $variables, $values)
     {
+        $this->manager = $manager;
         $this->variables = $variables;
         $this->values = $values;
     }
