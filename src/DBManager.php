@@ -22,6 +22,7 @@ class DBManager
     private $settings;
     private $migrations;
     private $snapshots;
+    private $debugging = false;
 
     public function __construct($dir, $db_host, $db_name, $db_username, $db_password, $ignore = [], $parsers = [], $variables = [], $db_table_prefix = '__')
     {
@@ -30,7 +31,7 @@ class DBManager
         $this->ignore = array_merge([
             $this->regex('/^\s*?(?:SELECT|SHOW|DESCRIBE)\s/ui'),
         ], $ignore);
-        $this->parser = new DBParser($parsers, $variables);
+        $this->parser = new DBParser($this, $parsers, $variables);
         $this->db_host = $db_host;
         $this->db_name = $db_name;
         $this->db_username = $db_username;
@@ -96,5 +97,16 @@ class DBManager
     public function parser()
     {
         return $this->parser;
+    }
+
+
+    public function setDebug($debug)
+    {
+        $this->debugging = $debug;
+    }
+
+    public function isDebugging()
+    {
+        return $this->debugging;
     }
 }

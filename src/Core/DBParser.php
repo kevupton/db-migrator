@@ -3,6 +3,7 @@
 namespace Kevupton\DBMigrator\Core;
 
 use Exception;
+use Kevupton\DBMigrator\DBManager;
 use ParseError;
 use stdClass;
 
@@ -10,12 +11,14 @@ class DBParser
 {
     private $variables = [];
     private $values = [];
+    /** @var DBManager */
+    private $manager;
 
     const VAR_START = '#VAR{{';
     const VAR_END = '}}';
     const PATTERN_IDENTITY = '?';
 
-    public function __construct($variables, $values)
+    public function __construct($manager, $variables, $values)
     {
         $this->variables = $variables;
         $this->values = $values;
@@ -145,13 +148,17 @@ class DBParser
             try {
                 eval($temp);
             }
-            catch (ParseError $e) {
+            catch (\Error $e) {
+                if ($this->manager->isDebugging()) {
+                    error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                    error_log($temp);
+                }
+
                 throw new \Exception($e->getMessage());
             }
 
             $data = $this->replace($from, $to, $this->unserialize(stripslashes($temp)), true);
         }
-
         catch (Exception $e) {
             if (is_array($data) || $data instanceof stdClass) {
                 foreach ($data as &$value) {

@@ -25,7 +25,8 @@ abstract class BaseCommand extends Command
     {
         $this->addOption('database_path', ['db'], InputOption::VALUE_OPTIONAL, 'The path to the Database directory', 'db')
             ->addOption('basic', null, InputOption::VALUE_OPTIONAL, 'Whether to use for a basic site. Prioritizes wordpress.', false)
-            ->addOption('env_path', ['env'], InputOption::VALUE_OPTIONAL, 'The path to the .env file directory', './');
+            ->addOption('env_path', ['env'], InputOption::VALUE_OPTIONAL, 'The path to the .env file directory', './')
+            ->addOption('debug', ['d'], InputOption::VALUE_OPTIONAL, 'Whether or not to debug the application');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -47,6 +48,10 @@ abstract class BaseCommand extends Command
         }
         else {
             $this->manager = create_wp_db_manager($database_path);
+        }
+
+        if ($input->hasOption('debug')) {
+            $this->manager->setDebug(true);
         }
 
         $output->writeln('Running in context: ' . $database_path);
