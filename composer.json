@@ -2,7 +2,7 @@
     "name": "kevupton/db-migrator",
     "description": "",
     "type": "library",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "homepage": "https://github.com/kevupton/db-migrator",
     "require": {
         "dg/mysql-dump": "^1.5",
