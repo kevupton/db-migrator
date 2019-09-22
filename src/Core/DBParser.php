@@ -30,6 +30,9 @@ class DBParser
         if (!$log_file) {
             $this->logger = new Logger();
         }
+        else {
+            $this->logger = $log_file;
+        }
 
         $this->variables = $variables;
         $this->values = $values;
@@ -74,6 +77,7 @@ class DBParser
 
             if ($result !== $stringPiece) {
                 $string = str_replace($stringPiece, $result, $string);
+                $stringPiece = $result;
             }
         }
 
@@ -148,33 +152,36 @@ class DBParser
      */
     private function replace($from = '', $to = '', $data = '', $serialised = false)
     {
-        $this->logger->log([
-            'from' => $from,
-            'to' => $to,
-            'data' => $data,
-            'serialized' => $serialised,
-        ]);
-
         try {
             if (!is_string($data)) {
                 throw new Exception('$data is not a string, cannot unserialize it...');
             }
 
-            $temp = '$temp = "' . $data . '";';
+            $tmpData = str_replace(["\n", "\r"], ['\n', '\r'], $data);
 
             /* Execute the storing of the temp data */
             try {
-                eval($temp);
-            } catch (\Error $e) {
-                if ($this->manager->isDebugging()) {
-                    error_log($e->getMessage() . "\n" . $e->getTraceAsString());
-                    error_log($temp);
+                $data = $this->unserialize(addslashes($tmpData));
+            } catch (\Exception $e) {
+                try {
+                    $data = $this->unserialize($tmpData);
                 }
+                catch(\Exception $e) {
+                    try {
+                        $data = $this->unserialize(stripslashes($tmpData));
+                    }
+                    catch (\Exception $e) {
+                        if ($this->manager->isDebugging()) {
+                            error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+                            error_log($data);
+                        }
 
-                throw new \Exception($e->getMessage());
+                        throw new \Exception($e->getMessage());
+                    }
+                }
             }
 
-            $data = $this->replace($from, $to, $this->unserialize(stripslashes($temp)), true);
+            $data = $this->replace($from, $to, $data, true);
         } catch (Exception $e) {
             if (is_array($data) || $data instanceof stdClass) {
                 foreach ($data as &$value) {
