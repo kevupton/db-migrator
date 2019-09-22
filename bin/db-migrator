@@ -18,15 +18,30 @@ if (!file_exists($dir . '/autoload.php')) {
 
 require_once $dir . '/autoload.php';
 
-use Kevupton\DBMigrator\Console\ApplySnapshotCommand;
-use Kevupton\DBMigrator\Console\TakeSnapshotCommand;
-use Symfony\Component\Console\Application;
+//use Kevupton\DBMigrator\Console\ApplySnapshotCommand;
+//use Kevupton\DBMigrator\Console\TakeSnapshotCommand;
+//use Symfony\Component\Console\Application;
 
-$application = new Application();
+//$application = new Application();
+//
+//$application->setName('db-migrator');
+//
+//$application->add(new TakeSnapshotCommand());
+//$application->add(new ApplySnapshotCommand());
 
-$application->setName('db-migrator');
+//$application->run();
 
-$application->add(new TakeSnapshotCommand());
-$application->add(new ApplySnapshotCommand());
+// As mentioned in the top answer, we need to set up
+// some general error handling
+function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+    throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+}
+set_error_handler("exception_error_handler");
 
-$application->run();
+
+$line = file_get_contents(__DIR__ . '/test.dump');
+
+$manager = create_wp_db_manager();
+
+$output =  $manager->parser()->replaceStringValue($line, $line);
+file_put_contents(__DIR__ . '/test.output', $output);

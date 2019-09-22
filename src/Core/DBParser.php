@@ -18,9 +18,19 @@ class DBParser
     const VAR_END = '}}';
     const PATTERN_IDENTITY = '?';
 
-    public function __construct($manager, $variables, $values)
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    public function __construct($manager, $variables, $values, $log_file = null)
     {
         $this->manager = $manager;
+
+        if (!$log_file) {
+            $this->logger = new Logger();
+        }
+
         $this->variables = $variables;
         $this->values = $values;
     }
@@ -57,7 +67,7 @@ class DBParser
         return $string;
     }
 
-    private function substituteVariables($stringPiece, $string)
+    public function substituteVariables($stringPiece, $string)
     {
         foreach ($this->values as $variable => $value) {
             $result = $this->replace($this->getVarName($variable), $value, $stringPiece);
@@ -70,7 +80,7 @@ class DBParser
         return $string;
     }
 
-    private function replaceStringValue($stringPiece, $string)
+    public function replaceStringValue($stringPiece, $string)
     {
         foreach ($this->variables as $variable => $searchTerms) {
             foreach ($searchTerms as $searchTerm) {
@@ -138,6 +148,13 @@ class DBParser
      */
     private function replace($from = '', $to = '', $data = '', $serialised = false)
     {
+        $this->logger->log([
+            'from' => $from,
+            'to' => $to,
+            'data' => $data,
+            'serialized' => $serialised,
+        ]);
+
         try {
             if (!is_string($data)) {
                 throw new Exception('$data is not a string, cannot unserialize it...');
@@ -148,8 +165,7 @@ class DBParser
             /* Execute the storing of the temp data */
             try {
                 eval($temp);
-            }
-            catch (\Error $e) {
+            } catch (\Error $e) {
                 if ($this->manager->isDebugging()) {
                     error_log($e->getMessage() . "\n" . $e->getTraceAsString());
                     error_log($temp);
@@ -159,8 +175,7 @@ class DBParser
             }
 
             $data = $this->replace($from, $to, $this->unserialize(stripslashes($temp)), true);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             if (is_array($data) || $data instanceof stdClass) {
                 foreach ($data as &$value) {
                     $value = $this->replace($from, $to, $value, false);
