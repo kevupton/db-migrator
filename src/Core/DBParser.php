@@ -157,7 +157,10 @@ class DBParser
                 throw new Exception('$data is not a string, cannot unserialize it...');
             }
 
-            $tmpData = str_replace(["\n", "\r"], ['\n', '\r'], $data);
+            /**
+             * Without this we would receive rns because for some reason the \r\n isn't being formatted properly
+             */
+            $tmpData = str_replace(['\n', '\r'], ["\n", "\r"], $data);
 
             /* Execute the storing of the temp data */
             try {
